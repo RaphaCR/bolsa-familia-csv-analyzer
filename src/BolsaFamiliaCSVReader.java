@@ -101,7 +101,7 @@ public class BolsaFamiliaCSVReader {
             for (String[] columns : filteredByMunicipality) {
 
                 String beneficiaryName = removeDiacritics(
-                        columns[beneficiaryNameIndex]   // ✅ AQUI ESTÁ O FILTRO CERTO
+                        columns[beneficiaryNameIndex]   //
                                 .replace("\"", "")
                                 .trim()
                                 .toUpperCase()
