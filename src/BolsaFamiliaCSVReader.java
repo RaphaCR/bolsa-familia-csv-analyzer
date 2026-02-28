@@ -1,12 +1,9 @@
-
-import java.util.Arrays;
+import java.util.*;
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.Scanner;
 import java.text.Normalizer;
 import java.text.NumberFormat;
 import java.util.Locale;
-
 
 public class BolsaFamiliaCSVReader {
 
@@ -19,61 +16,54 @@ public class BolsaFamiliaCSVReader {
 
         Scanner scanner = new Scanner(System.in);
 
-        int lineCounter = 0;
-
         System.out.println("Check Bolsa Familia CSV file");
 
-        System.out.print("\nType de full path to the CSV file: ");
+        System.out.print("\nType the full path to the CSV file: ");
         String filePath = scanner.nextLine();
 
-        System.out.print("Enter the municipatily name to apply the filter: ");
+        System.out.print("Enter the municipality name to apply the filter: ");
         String municipalitySearch = removeDiacritics(
                 scanner.nextLine().trim().toUpperCase()
         );
 
-        int totalRecords = 0;
-        double sumValues = 0.0;
+        List<String[]> filteredByMunicipality = new ArrayList<>();
+        boolean municipalityExists = false;
 
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(new FileInputStream(filePath), Charset.forName("ISO-8859-1")))) {
 
-            String line;
-
             String header = br.readLine();
             String[] columnHeaders = header.split(";");
 
-            System.out.println("Full header:");
-            System.out.println(header);
-
-            for (int i = 0; i < columnHeaders.length; i++) {
-                System.out.println(i + " -> " + columnHeaders[i]);
-            }
-
             int municipalityIndex = 4;
             int valueIndex = 8;
+            int beneficiaryNameIndex = 7;
 
             for (int i = 0; i < columnHeaders.length; i++) {
-                if (columnHeaders[i].toUpperCase().contains("MUNICIPALITY NAME")) {
+
+                String column = columnHeaders[i].toUpperCase();
+
+                if (column.contains("NOME MUNIC")) {
                     municipalityIndex = i;
                 }
-                if (columnHeaders[i].toUpperCase().contains("Payment amount")) {
+
+                if (column.contains("VALOR")) {
                     valueIndex = i;
                 }
+
+                if (column.contains("NOME FAVORECIDO")) {
+                    beneficiaryNameIndex = i;
+                }
             }
+
+            String line;
 
             while ((line = br.readLine()) != null) {
 
                 String[] columns = line.split(";");
 
-                lineCounter++;
+                if (columns.length <= valueIndex) continue;
 
-                if (lineCounter % 500000 == 0) {
-                    System.out.println("Processed: " + lineCounter + " lines...");
-                }
-
-                String strValue = columns[valueIndex]
-                        .replace("\"", "")
-                        .replace(",", ".");
                 String municipality = removeDiacritics(
                         columns[municipalityIndex]
                                 .replace("\"", "")
@@ -81,25 +71,65 @@ public class BolsaFamiliaCSVReader {
                                 .toUpperCase()
                 );
 
-                if (columns.length > 3) {
+                if (municipality.equals(municipalitySearch)) {
+                    municipalityExists = true;
+                    filteredByMunicipality.add(columns);
+                }
+            }
 
+            if (!municipalityExists) {
+                throw new IllegalArgumentException(
+                        "Municipality not found: " + municipalitySearch
+                );
+            }
 
-                    if (municipality.equals(municipalitySearch)) {
+            System.out.print("Do you want to filter by beneficiary name? (yes/no): ");
+            String filterByNameOption = scanner.nextLine().trim().toLowerCase();
 
-                        System.out.println(Arrays.toString(columns));
-                        totalRecords++;
+            String nameSearch = null;
 
-                        try {
-                            double value = Double.parseDouble(strValue);
-                            sumValues += value;
-                        } catch (NumberFormatException e) {
+            if (filterByNameOption.equals("yes")) {
+                System.out.print("Enter the beneficiary name to filter: ");
+                nameSearch = removeDiacritics(
+                        scanner.nextLine().trim().toUpperCase()
+                );
+            }
 
-                        }
+            int totalRecords = 0;
+            double sumValues = 0.0;
 
-                        System.out.println("Beneficiary: " + columns[0] +
-                                " | CPF: " + columns[1] +
-                                " | Value: R$ " + strValue);
-                    }
+            for (String[] columns : filteredByMunicipality) {
+
+                String beneficiaryName = removeDiacritics(
+                        columns[beneficiaryNameIndex]   // ✅ AQUI ESTÁ O FILTRO CERTO
+                                .replace("\"", "")
+                                .trim()
+                                .toUpperCase()
+                );
+
+                boolean nameMatches = true;
+
+                if (nameSearch != null) {
+                    nameMatches = beneficiaryName.contains(nameSearch);
+                }
+
+                if (nameMatches) {
+
+                    String strValue = columns[valueIndex]
+                            .replace("\"", "")
+                            .replace(",", ".");
+
+                    System.out.println(Arrays.toString(columns));
+                    totalRecords++;
+
+                    try {
+                        double value = Double.parseDouble(strValue);
+                        sumValues += value;
+                    } catch (NumberFormatException ignored) {}
+
+                    System.out.println("Beneficiary: " + columns[beneficiaryNameIndex] +
+                            " | CPF: " + columns[1] +
+                            " | Value: R$ " + strValue);
                 }
             }
 
@@ -116,4 +146,3 @@ public class BolsaFamiliaCSVReader {
         scanner.close();
     }
 }
-
