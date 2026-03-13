@@ -14,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/* BolsaFamiliaCSVReaderGUI class
+ * Main graphical interface to load, filter and display Bolsa Família CSV data.
+ * Provides input components (file, municipality, beneficiary name), results table and summary.
+ */
 public class BolsaFamiliaCSVReaderGUI extends JFrame {
 
     private JTextField txtFilePath;
@@ -27,6 +31,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
     private JLabel lblTotalRecords;
     private JLabel lblTotalAmount;
 
+    // Color palette used by the UI (visual consistency)
     private final Color BACKGROUND = new Color(243, 246, 251);
     private final Color CARD = Color.WHITE;
     private final Color PRIMARY = new Color(37, 99, 235);
@@ -40,6 +45,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
     private final Color BORDER = new Color(220, 226, 234);
     private final Color TABLE_HEADER = new Color(230, 238, 250);
 
+    // Constructor: sets title, size and triggers UI creation
     public BolsaFamiliaCSVReaderGUI() {
         setTitle("Bolsa Família CSV Analyzer");
         setSize(1080, 700);
@@ -48,11 +54,13 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         initUI();
     }
 
+    // Normalize text by removing diacritics/accents for safe comparisons
     public static String removeDiacritics(String text) {
         return Normalizer.normalize(text, Normalizer.Form.NFD)
                 .replaceAll("[^\\p{ASCII}]", "");
     }
 
+    // Initialize and arrange the main window panels (header, center, footer)
     private void initUI() {
         JPanel mainPanel = new JPanel(new BorderLayout(16, 16));
         mainPanel.setBackground(BACKGROUND);
@@ -65,6 +73,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         setContentPane(mainPanel);
     }
 
+    // Create header panel with title and explanatory subtitle
     private JPanel createHeaderPanel() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
@@ -88,6 +97,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         return panel;
     }
 
+    // Create center panel containing filters and the results table
     private JPanel createCenterPanel() {
         JPanel center = new JPanel(new BorderLayout(16, 16));
         center.setOpaque(false);
@@ -96,6 +106,8 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         return center;
     }
 
+    // Build the filters card: file field, municipality and optional name filter
+    // Also configures buttons (Select File, Search, Clear) and their listeners
     private JPanel createFiltersCard() {
         JPanel card = createCardPanel();
         card.setLayout(new GridBagLayout());
@@ -191,6 +203,8 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         return card;
     }
 
+    // Create the card that holds the results table (columns: Beneficiary, CPF, Value)
+    // Defines the table model and applies visual styling
     private JPanel createTableCard() {
         JPanel card = createCardPanel();
         card.setLayout(new BorderLayout(10, 10));
@@ -220,6 +234,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         return card;
     }
 
+    // Create footer/summary with total records and total amount found
     private JPanel createFooterPanel() {
         JPanel panel = createCardPanel();
         panel.setLayout(new GridLayout(1, 2, 10, 0));
@@ -238,6 +253,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         return panel;
     }
 
+    // Helper: creates a panel with border and padding used as a visual 'card'
     private JPanel createCardPanel() {
         JPanel panel = new JPanel();
         panel.setBackground(CARD);
@@ -248,6 +264,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         return panel;
     }
 
+    // Helper: creates a styled JLabel used in forms
     private JLabel createLabel(String text) {
         JLabel label = new JLabel(text);
         label.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -255,6 +272,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         return label;
     }
 
+    // Helper: creates a JTextField with consistent styling (padding, font, size)
     private JTextField createTextField() {
         JTextField field = new JTextField();
         field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -267,6 +285,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         return field;
     }
 
+    // Helper: creates a JButton with hover behavior and the UI's standard styling
     private JButton createStyledButton(String text, Color baseColor, Color hoverColor) {
         JButton button = new JButton(text);
         button.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -293,6 +312,8 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         return button;
     }
 
+    // Apply styles and renderers to the table to make it more readable
+    // Defines column alignment, heights, colors and header
     private void styleTable(JTable table) {
         table.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         table.setRowHeight(30);
@@ -327,6 +348,8 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         table.getColumnModel().getColumn(2).setPreferredWidth(140);
     }
 
+    // Opens a JFileChooser for the user to select the CSV file
+    // Fills the file path field with the selected file
     private void chooseFile() {
         JFileChooser chooser = new JFileChooser();
         int option = chooser.showOpenDialog(this);
@@ -336,6 +359,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         }
     }
 
+    // Clears all form fields, unchecks options and resets the table and summaries
     private void clearFields() {
         txtFilePath.setText("");
         txtMunicipality.setText("");
@@ -349,6 +373,12 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         lblTotalAmount.setText("Total amount: R$ 0,00");
     }
 
+    // Main CSV read/filter process:
+    // 1) validate inputs (file and municipality);
+    // 2) normalize search terms (remove diacritics, uppercase);
+    // 3) detect column indices from the header;
+    // 4) iterate lines, filter by municipality and (optionally) by name;
+    // 5) populate the table and sum values to display totals
     private void processCSV() {
         tableModel.setRowCount(0);
 
@@ -458,6 +488,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         }
     }
 
+    // Application entrypoint: sets L&F and shows the UI on the event thread
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
