@@ -47,7 +47,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
 
     // Constructor: sets title, size and triggers UI creation
     public BolsaFamiliaCSVReaderGUI() {
-        setTitle("Bolsa Família CSV Analyzer");
+        setTitle("Bolsa Família CSV");
         setSize(1080, 700);
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -78,11 +78,11 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setOpaque(false);
 
-        JLabel title = new JLabel("Bolsa Família CSV Analyzer");
+        JLabel title = new JLabel("Bolsa Família CSV");
         title.setFont(new Font("Segoe UI", Font.BOLD, 26));
         title.setForeground(TEXT);
 
-        JLabel subtitle = new JLabel("Load a CSV file, filter by municipality and beneficiary, and view the results.");
+        JLabel subtitle = new JLabel("Carregue um arquivo CSV, filtre por municipio e beneficiário, e veja os resultados.");
         subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         subtitle.setForeground(MUTED);
 
@@ -117,30 +117,30 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.anchor = GridBagConstraints.WEST;
 
-        JLabel lblSection = new JLabel("Filters");
+        JLabel lblSection = new JLabel("Filtros");
         lblSection.setFont(new Font("Segoe UI", Font.BOLD, 18));
         lblSection.setForeground(TEXT);
 
-        JLabel lblFile = createLabel("CSV File");
+        JLabel lblFile = createLabel("Arquivo CSV");
         txtFilePath = createTextField();
         txtFilePath.setEditable(false);
 
-        JButton btnBrowse = createStyledButton("Select File", PRIMARY, PRIMARY_HOVER);
+        JButton btnBrowse = createStyledButton("Selecione o arquivo", PRIMARY, PRIMARY_HOVER);
 
-        JLabel lblMunicipality = createLabel("Municipality");
+        JLabel lblMunicipality = createLabel("Municipio");
         txtMunicipality = createTextField();
 
-        chkFilterByName = new JCheckBox("Filter by beneficiary name");
+        chkFilterByName = new JCheckBox("Filtrar por beneficiário");
         chkFilterByName.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         chkFilterByName.setForeground(TEXT);
         chkFilterByName.setOpaque(false);
 
-        JLabel lblName = createLabel("Beneficiary Name");
+        JLabel lblName = createLabel("Nome do beneficiário");
         txtBeneficiaryName = createTextField();
         txtBeneficiaryName.setEnabled(false);
 
-        JButton btnSearch = createStyledButton("Search", SUCCESS, SUCCESS_HOVER);
-        JButton btnClear = createStyledButton("Clear", DANGER, DANGER_HOVER);
+        JButton btnSearch = createStyledButton("Buscar", SUCCESS, SUCCESS_HOVER);
+        JButton btnClear = createStyledButton("Limpar", DANGER, DANGER_HOVER);
 
         chkFilterByName.addActionListener(e ->
                 txtBeneficiaryName.setEnabled(chkFilterByName.isSelected())
@@ -209,11 +209,11 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         JPanel card = createCardPanel();
         card.setLayout(new BorderLayout(10, 10));
 
-        JLabel lblSection = new JLabel("Results");
+        JLabel lblSection = new JLabel("Resultado");
         lblSection.setFont(new Font("Segoe UI", Font.BOLD, 18));
         lblSection.setForeground(TEXT);
 
-        tableModel = new DefaultTableModel(new Object[]{"Beneficiary", "CPF", "Value"}, 0) {
+        tableModel = new DefaultTableModel(new Object[]{"Beneficiário", "CPF", "Valor"}, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -239,11 +239,11 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         JPanel panel = createCardPanel();
         panel.setLayout(new GridLayout(1, 2, 10, 0));
 
-        lblTotalRecords = new JLabel("Total records: 0");
+        lblTotalRecords = new JLabel("Total de registros: 0");
         lblTotalRecords.setFont(new Font("Segoe UI", Font.BOLD, 15));
         lblTotalRecords.setForeground(TEXT);
 
-        lblTotalAmount = new JLabel("Total amount: R$ 0,00");
+        lblTotalAmount = new JLabel("Valor total: R$ 0,00");
         lblTotalAmount.setFont(new Font("Segoe UI", Font.BOLD, 15));
         lblTotalAmount.setForeground(SUCCESS);
 
@@ -369,8 +369,8 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
 
         tableModel.setRowCount(0);
 
-        lblTotalRecords.setText("Total records: 0");
-        lblTotalAmount.setText("Total amount: R$ 0,00");
+        lblTotalRecords.setText("Total de registros: 0");
+        lblTotalAmount.setText("Valor total: R$ 0,00");
     }
 
     // Main CSV read/filter process:
@@ -386,12 +386,12 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         String municipalityInput = txtMunicipality.getText().trim();
 
         if (filePath.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Select a CSV file.");
+            JOptionPane.showMessageDialog(this, "Selecione um arquivo CSV.");
             return;
         }
 
         if (municipalityInput.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Enter a municipality.");
+            JOptionPane.showMessageDialog(this, "Insira um municipio.");
             return;
         }
 
@@ -401,7 +401,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
         if (chkFilterByName.isSelected()) {
             nameSearch = removeDiacritics(txtBeneficiaryName.getText().trim().toUpperCase());
             if (nameSearch.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Enter the beneficiary name.");
+                JOptionPane.showMessageDialog(this, "Insira o nome do beneficiário.");
                 return;
             }
         }
@@ -413,7 +413,7 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
 
             String header = br.readLine();
             if (header == null || header.isBlank()) {
-                JOptionPane.showMessageDialog(this, "The CSV file is empty.");
+                JOptionPane.showMessageDialog(this, "O arquivo CSV está vazio.");
                 return;
             }
 
@@ -480,11 +480,11 @@ public class BolsaFamiliaCSVReaderGUI extends JFrame {
             }
 
             NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("pt", "BR"));
-            lblTotalRecords.setText("Total records: " + total);
-            lblTotalAmount.setText("Total amount: " + format.format(sum));
+            lblTotalRecords.setText("Total de registros: " + total);
+            lblTotalAmount.setText("Valor total: " + format.format(sum));
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error reading file: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Erro ao ler o arquivo: " + e.getMessage());
         }
     }
 
