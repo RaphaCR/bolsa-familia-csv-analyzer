@@ -3,7 +3,7 @@ Português:
 Projeto Bolsa Família — Transformando Dados Públicos em Informação Acessível
 
 No início da minha jornada na faculdade, me deparei com um desafio bem prático: como consultar dados de forma rápida quando o arquivo é gigante?
-O Governo Federal disponibiliza os dados dos beneficiários do Bolsa Família no Portal da Transparência em arquivos .CSV massivos — pesados e bem difíceis de navegar manualmente. Foi aí que decidi criar essa aplicação em Java. (https://portaldatransparencia.gov.br)
+  O Governo Federal disponibiliza os dados dos beneficiários do Bolsa Família no Portal da Transparência em arquivos .CSV massivos — pesados e bem difíceis de navegar manualmente. Foi aí que decidi criar essa aplicação em Java. (https://portaldatransparencia.gov.br)
 
 O objetivo foi simples: criar uma ferramenta que filtrasse essa montanha de dados e entregasse o que realmente importa em poucos segundos.
 
@@ -21,7 +21,7 @@ The Bolsa Família Project — Turning Public Data into Accessible Information
 
 Early in my college career, I faced a very practical challenge: how can I quickly look up data when the file is huge?
 
-    The Federal Government makes data on Bolsa Família beneficiaries available on the Transparency Portal in massive .CSV files—which are large and very difficult to navigate manually. That’s when I decided to create this Java application. (https://portaldatransparencia.gov.br)
+  The Federal Government makes data on Bolsa Família beneficiaries available on the Transparency Portal in massive .CSV files—which are large and very difficult to navigate manually. That’s when I decided to create this Java application. (https://portaldatransparencia.gov.br)
 
 The goal was simple: to create a tool that would filter through this mountain of data and deliver what really matters in just a few seconds.
 
